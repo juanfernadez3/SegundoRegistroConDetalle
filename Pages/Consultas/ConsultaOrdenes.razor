@@ -1,0 +1,43 @@
+﻿@page "/ConsultaOrdenes"
+@using SegundoRegistroConDetalle.Models;
+@using SegundoRegistroConDetalle.BLL;
+
+<h3>Consulta ordenes</h3>
+
+@if (ordenes == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>MoraId</th>
+                <th>Fecha</th>
+                <th>SuplidorId</th>
+                <th>Monto</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in ordenes)
+            {
+                <tr>
+                    <td>@order.OrdenId</td>
+                    <td>@order.Fecha.ToShortDateString()</td>
+                    <td>@order.SuplidorId</td>
+                    <td>@order.Monto</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+@code {
+
+    private List<Ordenes> ordenes = new List<Ordenes>();
+
+    protected override void OnInitialized()
+    {
+        ordenes = OrdenesBLL.GetList(x => true);
+    }
+}

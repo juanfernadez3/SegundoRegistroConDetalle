@@ -1,0 +1,258 @@
+﻿@page "/RegistroOrdenes"
+@using SegundoRegistroConDetalle.Models;
+@using SegundoRegistroConDetalle.BLL;
+@inject IToastService toast
+
+
+<EditForm Model="ordenes" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="card">
+        <div class="card-header">
+            <h3>Registro ordenes</h3>
+        </div>
+
+        <div class="card-body">
+            <form>
+                @*OrdenId*@
+                <div class="form-row align-items-center">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="OrdenIdInputNumber">Orden Id</label>
+                            <div class="input-group">
+                                <InputNumber @bind-Value="ordenes.OrdenId" id="OrdenIdInputNumber" min="0" class="form-control col-4" />
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-primary" @onclick="Buscar">
+                                        <span class="oi oi-zoom-in" /> Buscar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @*Fecha*@
+                <div class="form-group">
+                    <label for="FechaInputDate">Fecha</label>
+                    <InputDate @bind-Value="ordenes.Fecha" id="FechaInputDate" class="form-control" />
+                    <ValidationMessage For="(() => ordenes.Fecha)" />
+                    <small id="DateInLineHelper" class="text-muted"> Ingrese Fecha </small>
+                </div>
+
+                @*SuplidorId*@
+                <div class="form-group">
+                    <label for="SupplierInputNumber">SuplidorId</label>
+                    <InputNumber @bind-Value="ordenes.SuplidorId" id="SupplierInputNumber" class="form-control" />
+                    <ValidationMessage For="(() => ordenes.SuplidorId)" />
+                    <small id="TotalInLineHelper" class="text-muted">Ingrese el Id del suplidor </small>
+                </div>
+
+                @*Datos del detalle*@
+                <div class="row">
+                    <div class="form-group col">
+                        <label>Id</label>
+                        <InputNumber @bind-Value="id" class="form-control" readOnly="true" />
+                    </div>
+
+                    <div class="form-group col">
+                        <label>ProductoId</label>
+                        <InputNumber @bind-Value="productoId" min="0" class="form-control" />
+                        <small id="ProductIdInLineHelper" class="text-muted"> Ingrese Id del Producto </small>
+                    </div>
+
+                    <div class="form-group col">
+                        <label>cantidad</label>
+                        <InputNumber @bind-Value="cantidad" min="0" class="form-control" />
+                        <small id="QuantityInLineHelper" class="text-muted">Ingrese Cantidad del Producto </small>
+                    </div>
+
+                    <div class="form-group col">
+                        <label>Costo</label>
+                        <div class="input-group">
+                            <InputNumber @bind-Value="costo" class="form-control" />
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-primary" @onclick="AgregarDetalle">
+                                    <i class="oi oi-plus" aria-hidden="true" /> Agregar
+                                </button>
+                            </div>
+                        </div>
+                        <small id="CostoInLineHelper" class="text-muted"> costo del producto </small>
+                    </div>
+                </div>
+
+                @*Detalle*@
+                <table class="table" style="border-bottom: 1px groove;">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Id</th>
+                            <th scope="col">ordenId</th>
+                            <th scope="col">productoId</th>
+                            <th scope="col">Cantidad</th>
+                            <th scope="col">Costo</th>
+                            <th scope="col">Opcion</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ordenes.OrdenesDetalle)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>@item.OrdenId</td>
+                                <td>@item.ProductoId</td>
+                                <td>@item.Cantidad</td>
+                                <td>@item.Costo</td>
+                                <td><button type="button" class="btn btn-danger" @onclick="(() => EliminarDetalle(item))">Remover</button></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                @*Monto*@
+                <div class="form-group" style="float: right; margin-top: 2px; font-weight: bold;">
+                    <label for="TotalInputNumber">Monto</label>
+                    <InputNumber @bind-Value="ordenes.Monto" id="TotalInputNumber" readOnly="true" class="form-control" />
+                    <ValidationMessage For="(() => ordenes.Monto)" />
+                    <small id="TotalInLineHelper" class="text-muted">Monto de la orden  </small>
+                </div>
+            </form>
+        </div>
+
+        @*Buttons*@
+        <div class="card-footer">
+            <div class="form-group text-center" display: inline-block>
+                <button type="button" class="btn btn-lg btn-primary" @onclick="Nuevo">
+                    <span class="oi oi-plus"></span> Nuevo
+                </button>
+
+                <button type="submit" class="btn btn-lg btn-success">
+                    <span class="oi oi-clipboard" aria-hidden="true"></span> Guardar
+                </button>
+
+                <button type="button" class="btn btn-lg btn-danger" @onclick="Eliminar">
+                    <span class="oi oi-trash"></span>   Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+
+    Ordenes ordenes = new Ordenes();
+    private int id = 0;
+    private int cantidad = 0;
+    private int ordenId = 0;
+    private int productoId = 0;
+    private decimal costo = 0;
+
+    protected override void OnInitialized()
+    {
+        Nuevo();
+        Buscar();
+    }
+
+    private void Nuevo()
+    {
+        this.ordenes = new Ordenes();
+
+        id = 0;
+        cantidad = 0;
+        ordenId = 0;
+        productoId = 0;
+        costo = 0;
+    }
+
+    private void Buscar()
+    {
+        if (ordenes.OrdenId > 0)
+        {
+            var encontrado = OrdenesBLL.Buscar(ordenes.OrdenId);
+
+            if (encontrado != null)
+            {
+                this.ordenes = encontrado;
+                CalcularMonto();
+            }
+            else
+            {
+                toast.ShowWarning("No encontrado");
+            }
+        }
+    }
+
+    private void Guardar()
+    {
+        bool guardo;
+
+        guardo = OrdenesBLL.Guardar(ordenes);
+
+        if (guardo)
+        {
+            Nuevo();
+            toast.ShowSuccess("Guardado");
+        }
+        else
+            toast.ShowError("No Guardado");
+    }
+
+    private void Eliminar()
+    {
+        bool eliminar;
+
+        eliminar = OrdenesBLL.Eliminar(ordenes.OrdenId);
+
+        if (eliminar)
+        {
+            Nuevo();
+            toast.ShowSuccess("Eliminado");
+        }
+        else
+            toast.ShowError("No eliminado");
+    }
+
+    private void AgregarDetalle()
+    {
+        ordenes.OrdenesDetalle.Add(new OrdenesDetalle
+        {
+            Id = 0,
+            OrdenId = ordenes.OrdenId,
+            ProductoId = productoId,
+            Cantidad = cantidad,
+            Costo = costo
+
+        });
+
+        id = 0;
+        ordenId = ordenes.OrdenId;
+        productoId = 0;
+        cantidad = 0;
+        costo = 0;
+
+        CalcularMonto();
+
+    }
+
+    private void EliminarDetalle(OrdenesDetalle detalle)
+    {
+        try
+        {
+            ordenes.OrdenesDetalle.Remove(detalle);
+            CalcularMonto();
+        }
+        catch (Exception)
+        {
+
+        }
+    }
+
+    private void CalcularMonto()
+    {
+        decimal monto = 0;
+        foreach (var item in ordenes.OrdenesDetalle)
+        {
+
+            monto += item.Costo * item.Cantidad;
+        }
+        ordenes.Monto = monto;
+    }
+}
