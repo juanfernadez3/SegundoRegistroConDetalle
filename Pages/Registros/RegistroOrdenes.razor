@@ -47,62 +47,63 @@
                 </div>
 
                 @*Datos del detalle*@
-                <div class="row">
-                    <div class="form-group col">
-                        <label>Id</label>
-                        <InputNumber @bind-Value="id" class="form-control" readOnly="true" />
-                    </div>
+            <div class="row">
 
-                    <div class="form-group col">
-                        <label>ProductoId</label>
-                        <InputNumber @bind-Value="productoId" min="0" class="form-control" />
-                        <small id="ProductIdInLineHelper" class="text-muted"> Ingrese Id del Producto </small>
-                    </div>
-
-                    <div class="form-group col">
-                        <label>cantidad</label>
-                        <InputNumber @bind-Value="cantidad" min="0" class="form-control" />
-                        <small id="QuantityInLineHelper" class="text-muted">Ingrese Cantidad del Producto </small>
-                    </div>
-
-                    <div class="form-group col">
-                        <label>Costo</label>
-                        <div class="input-group">
-                            <InputNumber @bind-Value="costo" class="form-control" />
-                            <div class="input-group-append">
-                                <button type="button" class="btn btn-primary" @onclick="AgregarDetalle">
-                                    <i class="oi oi-plus" aria-hidden="true" /> Agregar
-                                </button>
-                            </div>
-                        </div>
-                        <small id="CostoInLineHelper" class="text-muted"> costo del producto </small>
-                    </div>
+                <div class="form-group col">
+                    <label>ProductoId</label>
+                    <InputNumber @bind-Value="productoId" min="0" class="form-control" />
+                    <small id="ProductIdInLineHelper" class="text-muted"> Ingrese Id del Producto </small>
                 </div>
+
+                <div class="form-group col">
+                    <label>cantidad</label>
+                    <InputNumber @bind-Value="cantidad" min="0" class="form-control" />
+                    <small id="QuantityInLineHelper" class="text-muted">Ingrese Cantidad del Producto </small>
+                </div>
+
+                <div class="form-group col">
+                    <label>Costo</label>
+                    <InputNumber @bind-Value="costo" class="form-control" />
+                    <small id="CostoInLineHelper" class="text-muted"> costo del producto </small>
+                    
+                </div>
+
+                <div class="form-group col">
+                    <label>Detalle</label>
+                    <div class="input-group">
+                        <InputText @bind-Value="detalle" min="0" class="form-control" />
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-primary" @onclick="AgregarDetalle">
+                                <i class="oi oi-plus" aria-hidden="true" /> Agregar
+                            </button>
+                        </div>
+                    </div>
+                    <small id="QuantityInLineHelper" class="text-muted">Ingrese detalle del Producto </small>
+                </div>
+            </div>
 
                 @*Detalle*@
                 <table class="table" style="border-bottom: 1px groove;">
                     <thead class="thead-dark">
                         <tr>
-                            <th scope="col">Id</th>
-                            <th scope="col">ordenId</th>
                             <th scope="col">productoId</th>
                             <th scope="col">Cantidad</th>
                             <th scope="col">Costo</th>
-                            <th scope="col">Opcion</th>
-
+                            <th scope="col">Detalle</th>
+                            <th scope="col">Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var item in ordenes.OrdenesDetalle)
                         {
-                            <tr>
-                                <td>@item.Id</td>
-                                <td>@item.OrdenId</td>
-                                <td>@item.ProductoId</td>
-                                <td>@item.Cantidad</td>
-                                <td>@item.Costo</td>
-                                <td><button type="button" class="btn btn-danger" @onclick="(() => EliminarDetalle(item))">Remover</button></td>
-                            </tr>
+                        <tr>
+                            <td>@item.ProductoId</td>
+                            <td>@item.Cantidad</td>
+                            <td>@item.Costo</td>
+                            <td>@item.Detalle</td>
+                            <td>@item.Total</td>
+                            <td><button type="button" class="btn btn-danger" @onclick="(() => EliminarDetalle(item))">Remover</button></td>
+                        </tr>
                         }
                     </tbody>
                 </table>
@@ -141,9 +142,12 @@
     Ordenes ordenes = new Ordenes();
     private int id = 0;
     private int cantidad = 0;
+    private string detalle = string.Empty;
     private int ordenId = 0;
     private int productoId = 0;
     private decimal costo = 0;
+    private decimal total = 0;
+
 
     protected override void OnInitialized()
     {
@@ -157,9 +161,11 @@
 
         id = 0;
         cantidad = 0;
+        detalle = string.Empty;
         ordenId = 0;
         productoId = 0;
         costo = 0;
+        total = 0;
     }
 
     private void Buscar()
@@ -217,16 +223,20 @@
             Id = 0,
             OrdenId = ordenes.OrdenId,
             ProductoId = productoId,
+            Detalle = detalle,
             Cantidad = cantidad,
-            Costo = costo
+            Costo = costo,
+            Total = (cantidad * costo)
 
-        });
+        }) ;
 
         id = 0;
         ordenId = ordenes.OrdenId;
         productoId = 0;
         cantidad = 0;
+        detalle = string.Empty;
         costo = 0;
+        total = 0;
 
         CalcularMonto();
 
@@ -255,4 +265,5 @@
         }
         ordenes.Monto = monto;
     }
+
 }

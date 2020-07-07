@@ -23,13 +23,21 @@ namespace SegundoRegistroConDetalle.Models
         [Required(ErrorMessage = "Ingrese costo de producto")]
         public decimal Costo { get; set; }
 
+        [Required(ErrorMessage = "Ingrese detalle de producto")]
+        public string Detalle { get; set; }
+
+        [Required(ErrorMessage = "Ingrese Total del producto")]
+        public decimal Total { get; set; }
+
         public OrdenesDetalle()
         {
             Id = 0;
             OrdenId = 0;
             Cantidad = 0;
             ProductoId = 0;
+            Detalle = string.Empty;
             Costo = 0;
+            Total = 0;
         }
     }
 }

@@ -9,7 +9,7 @@ using SegundoRegistroConDetalle.Dal;
 namespace SegundoRegistroConDetalle.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20200627020732_inicial")]
+    [Migration("20200707035304_inicial")]
     partial class inicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,11 +50,18 @@ namespace SegundoRegistroConDetalle.Migrations
                     b.Property<decimal>("Costo")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Detalle")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("OrdenId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("ProductoId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 

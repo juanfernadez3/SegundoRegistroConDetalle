@@ -44,7 +44,9 @@ namespace SegundoRegistroConDetalle.Migrations
                     OrdenId = table.Column<int>(nullable: false),
                     Cantidad = table.Column<int>(nullable: false),
                     ProductoId = table.Column<int>(nullable: false),
-                    Costo = table.Column<decimal>(nullable: false)
+                    Costo = table.Column<decimal>(nullable: false),
+                    Detalle = table.Column<string>(nullable: false),
+                    Total = table.Column<decimal>(nullable: false)
                 },
                 constraints: table =>
                 {

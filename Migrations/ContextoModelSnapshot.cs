@@ -48,11 +48,18 @@ namespace SegundoRegistroConDetalle.Migrations
                     b.Property<decimal>("Costo")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Detalle")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("OrdenId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("ProductoId")
                         .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
